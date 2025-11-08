@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_STUDENTS 100
+
+typedef struct {
+    int rollNo;
+    char name[50];
+    char department[50];
+    char subject[50];
+    int marks;
+} Student;
+
+Student students[MAX_STUDENTS];
+int studentCount = 0;
+
+// Function to add a new student
+void addStudent() {
+    if (studentCount == MAX_STUDENTS) {
+        printf("Database full, cannot add more students.\n");
+        return;
+    }
+    Student s;
+    printf("Enter roll number: ");
+    scanf("%d", &s.rollNo);
+    printf("Enter name: ");
+    scanf(" %[^\n]s", s.name);
+    printf("Enter department: ");
+    scanf(" %[^\n]s", s.department);
+    printf("Enter subject: ");
+    scanf(" %[^\n]s", s.subject);
+    printf("Enter marks: ");
+    scanf("%d", &s.marks);
+
+    students[studentCount++] = s;
+    printf("Student added successfully.\n");
+}
+
+// Function to search a student by roll number
+int searchStudent(int rollNo) {
+    for (int i = 0; i < studentCount; i++) {
+        if (students[i].rollNo == rollNo)
+            return i;
+    }
+    return -1;
+}
+
+// Function to delete a student by roll number
+void deleteStudent(int rollNo) {
+    int idx = searchStudent(rollNo);
+    if (idx == -1) {
+        printf("Student with roll number %d not found.\n", rollNo);
+        return;
+    }
+    for (int i = idx; i < studentCount - 1; i++) {
+        students[i] = students[i + 1];
+    }
+    studentCount--;
+    printf("Student deleted successfully.\n");
+}
+
+// Utility function to display student details
+void displayStudent(int idx) {
+    Student s = students[idx];
+    printf("Roll No: %d\nName: %s\nDepartment: %s\nSubject: %s\nMarks: %d\n",
+           s.rollNo, s.name, s.department, s.subject, s.marks);
+}
+
+int main() {
+    int choice, rollNo, idx;
+    while (1) {
+        printf("\nStudent Database Menu:\n");
+        printf("1. Add Student\n2. Delete Student\n3. Search Student\n4. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+        switch(choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                printf("Enter roll number to delete: ");
+                scanf("%d", &rollNo);
+                deleteStudent(rollNo);
+                break;
+            case 3:
+                printf("Enter roll number to search: ");
+                scanf("%d", &rollNo);
+                idx = searchStudent(rollNo);
+                if (idx != -1)
+                    displayStudent(idx);
+                else
+                    printf("Student not found.\n");
+                break;
+            case 4:
+                return 0;
+            default:
+                printf("Invalid choice, try again.\n");
+        }
+    }
+    return 0;
+}
