@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return strcmp((char *)a, (char *)b);
+}
+
+int binarySearch(char arr[][50], int n, char name[]) {
+    int left = 0, right = n - 1;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        int cmp = strcmp(arr[mid], name);
+        if (cmp == 0)
+            return mid;
+        else if (cmp < 0)
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }
+    return -1;
+}
+
+int main() {
+    char contacts[10][50] = {
+        "mohammad", "sid", "abhi", "Dev", "zain",
+        "kaiz", "Gengar", "bassi", "zakir", "amani"
+    };
+    int n = 10;
+    char name[50];
+    // Sort contacts
+    qsort(contacts, n, sizeof(contacts[0]), compare);
+
+    printf("Enter name to search: ");
+    scanf("%s", name);
+    int index = binarySearch(contacts, n, name);
+    if (index != -1)
+        printf("Contact %s found at position %d\n", name, index + 1);
+    else
+        printf("Contact %s not found\n", name);
+    return 0;
+}
