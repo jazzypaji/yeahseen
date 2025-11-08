@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Structure definition for a BST node
+struct Node {
+    char name[50];
+    struct Node *left, *right;
+};
+
+// Function to create a new node
+struct Node* createNode(char name[]) {
+    struct Node *newNode = (struct Node*)malloc(sizeof(struct Node));
+    strcpy(newNode->name, name);
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a node into the BST
+struct Node* insert(struct Node *root, char name[]) {
+    if (root == NULL)
+        return createNode(name);
+
+    if (strcmp(name, root->name) < 0)
+        root->left = insert(root->left, name);
+    else if (strcmp(name, root->name) > 0)
+        root->right = insert(root->right, name);
+    else
+        printf("Duplicate entry not allowed: %s\n", name);
+
+    return root;
+}
+
+// Inorder traversal: Left -> Root -> Right
+void inorder(struct Node *root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%s\n", root->name);
+        inorder(root->right);
+    }
+}
+
+// Preorder traversal: Root -> Left -> Right
+void preorder(struct Node *root) {
+    if (root != NULL) {
+        printf("%s\n", root->name);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+// Postorder traversal: Left -> Right -> Root
+void postorder(struct Node *root) {
+    if (root != NULL) {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%s\n", root->name);
+    }
+}
+
+// Function to search for a specific name
+struct Node* search(struct Node* root, char name[]) {
+    if (root == NULL || strcmp(root->name, name) == 0)
+        return root;
+    if (strcmp(name, root->name) < 0)
+        return search(root->left, name);
+    else
+        return search(root->right, name);
+}
+
+// Main function (menu-driven)
+int main() {
+    struct Node *root = NULL, *found;
+    int choice;
+    char name[50];
+    while (1) {
+        printf("\n--- Online Directory using Binary Search Tree ---\n");
+        printf("1. Insert a Name\n");
+        printf("2. Inorder Traversal (Sorted Directory)\n");
+        printf("3. Preorder Traversal\n");
+        printf("4. Postorder Traversal\n");
+        printf("5. Search for a Name\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter name to insert: ");
+                scanf("%s", name);
+                root = insert(root, name);
+                break;
+            case 2:
+                printf("Inorder Traversal (Sorted Directory):\n");
+                inorder(root);
+                break;
+            case 3:
+                printf("Preorder Traversal:\n");
+                preorder(root);
+                break;
+            case 4:
+                printf("Postorder Traversal:\n");
+                postorder(root);
+                break;
+            case 5:
+                printf("Enter name to search: ");
+                scanf("%s", name);
+                found = search(root, name);
+                if (found != NULL)
+                    printf("Name '%s' found in the directory.\n", name);
+                else
+                    printf("Name '%s' not found in the directory.\n", name);
+                break;
+            case 6:
+                printf("Exiting program.\n");
+                return 0;
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    }
+    return 0;
+}

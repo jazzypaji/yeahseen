@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 20
+
+int adj[MAX][MAX];     // Adjacency matrix
+int visited[MAX];      // Visited array
+int n;                 // Number of vertices (buildings)
+
+// Function to create adjacency matrix
+void createGraph() {
+    int i, j;
+    printf("Enter the number of buildings (vertices): ");
+    scanf("%d", &n);
+
+    printf("Enter adjacency matrix (1 for path, 0 for no path):\n");
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            scanf("%d", &adj[i][j]);
+        }
+    }
+}
+
+// ========== QUEUE IMPLEMENTATION FOR BFS ==========
+int queue[MAX], front = -1, rear = -1;
+
+void enqueue(int v) {
+    if (rear == MAX - 1) {
+        printf("Queue Overflow\n");
+        return;
+    }
+    if (front == -1)
+        front = 0;
+    queue[++rear] = v;
+}
+
+int dequeue() {
+    if (front == -1 || front > rear)
+        return -1;
+    return queue[front++];
+}
+
+// ========== STACK IMPLEMENTATION FOR DFS ==========
+int stack[MAX], top = -1;
+
+void push(int v) {
+    if (top == MAX - 1) {
+        printf("Stack Overflow\n");
+        return;
+    }
+    stack[++top] = v;
+}
+
+int pop() {
+    if (top == -1)
+        return -1;
+    return stack[top--];
+}
+
+// ========== DFS TRAVERSAL ==========
+void dfs(int start) {
+    for (int i = 0; i < n; i++)
+        visited[i] = 0;
+
+    printf("DFS Traversal starting from building No: %d\n", start);
+    visited[start] = 1;
+    printf("%d ", start);
+    push(start);
+
+    while (top != -1) {
+        int v = stack[top];
+        int found = 0;
+        for (int j = 0; j < n; j++) {
+            if (adj[v][j] == 1 && visited[j] == 0) {
+                push(j);
+                printf("%d ", j);
+                visited[j] = 1;
+                found = 1;
+                break;
+            }
+        }
+        if (!found)
+            pop();
+    }
+    printf("\n");
+}
+
+// ========== BFS TRAVERSAL ==========
+void bfs(int start) {
+    for (int i = 0; i < n; i++)
+        visited[i] = 0;
+
+    printf("BFS Traversal starting from building No: %d\n", start);
+    visited[start] = 1;
+    printf("%d ", start);
+    enqueue(start);
+
+    while (front != -1 && front <= rear) {
+        int v = dequeue();
+        for (int j = 0; j < n; j++) {
+            if (adj[v][j] == 1 && visited[j] == 0) {
+                printf("%d ", j);
+                enqueue(j);
+                visited[j] = 1;
+            }
+        }
+    }
+    printf("\n");
+}
+
+// ========== MAIN FUNCTION ==========
+int main() {
+    int start, choice;
+    createGraph();
+
+    printf("Enter starting building (vertex number 0-%d): ", n - 1);
+    scanf("%d", &start);
+
+    while (1) {
+        printf("\n---- Campus Navigation Menu ----\n");
+        printf("1. Display Adjacency Matrix\n");
+        printf("2. Breadth-First Search (BFS)\n");
+        printf("3. Depth-First Search (DFS)\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Adjacency Matrix:\n");
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        printf("%d ", adj[i][j]);
+                    }
+                    printf("\n");
+                }
+                break;
+            case 2:
+                bfs(start);
+                break;
+            case 3:
+                dfs(start);
+                break;
+            case 4:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    }
+    return 0;
+}

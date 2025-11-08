@@ -1,0 +1,222 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node *next;
+};
+
+struct node* head = NULL;
+
+// Insert at front
+void insertFront(int value) {
+    struct node* newNode = (struct node*)malloc(sizeof(struct node));
+    newNode->data = value;
+    newNode->next = head;
+    head = newNode;
+}
+
+// Insert after a specific value (middle)
+void insertMiddle(int value, int after) {
+    struct node* temp = head;
+    while (temp != NULL && temp->data != after) {
+        temp = temp->next;
+    }
+    if (temp == NULL) {
+        printf("%d not found in the list.\n", after);
+        return;
+    }
+    struct node* newNode = (struct node*)malloc(sizeof(struct node));
+    newNode->data = value;
+    newNode->next = temp->next;
+    temp->next = newNode;
+}
+
+// Insert at end
+void insertEnd(int value) {
+    struct node* newNode = (struct node*)malloc(sizeof(struct node));
+    newNode->data = value;
+    newNode->next = NULL;
+    if (head == NULL) {
+        head = newNode;
+        return;
+    }
+    struct node* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+// Delete from front
+void deleteFront() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    struct node* temp = head;
+    head = head->next;
+    free(temp);
+}
+
+// Delete by value (middle)
+void deleteMiddle(int value) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    if (head->data == value) {
+        deleteFront();
+        return;
+    }
+    struct node* temp = head;
+    while (temp->next != NULL && temp->next->data != value) {
+        temp = temp->next;
+    }
+    if (temp->next == NULL) {
+        printf("%d not found in the list.\n", value);
+        return;
+    }
+    struct node* toDelete = temp->next;
+    temp->next = toDelete->next;
+    free(toDelete);
+}
+
+// Delete from end
+void deleteEnd() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    if (head->next == NULL) {
+        free(head);
+        head = NULL;
+        return;
+    }
+    struct node* temp = head;
+    struct node* prev = NULL;
+    while (temp->next != NULL) {
+        prev = temp;
+        temp = temp->next;
+    }
+    prev->next = NULL;
+    free(temp);
+}
+
+// Display list
+void displayList() {
+    struct node* temp = head;
+    if (temp == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    printf("Linked List: ");
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Display in reverse (recursive)
+void displayReverse(struct node* p) {
+    if (p != NULL) {
+        displayReverse(p->next);
+        printf("%d ", p->data);
+    }
+}
+
+// Reverse the list (iterative)
+void reverseList() {
+    struct node *prev = NULL, *current = head, *next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    head = prev;
+}
+
+// Free entire linked list
+void freeList() {
+    struct node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    int choice, value, after;
+    while (1) {
+        printf("\n----- Linked List Menu -----\n");
+        printf("1. Insert at front\n");
+        printf("2. Insert after a specific value (middle)\n");
+        printf("3. Insert at end\n");
+        printf("4. Delete from front\n");
+        printf("5. Delete by value (middle)\n");
+        printf("6. Delete from end\n");
+        printf("7. Display list\n");
+        printf("8. Display list in reverse\n");
+        printf("9. Reverse the list\n");
+        printf("10. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert at front: ");
+                scanf("%d", &value);
+                insertFront(value);
+                break;
+            case 2:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                printf("Enter value to insert after: ");
+                scanf("%d", &after);
+                insertMiddle(value, after);
+                break;
+            case 3:
+                printf("Enter value to insert at end: ");
+                scanf("%d", &value);
+                insertEnd(value);
+                break;
+            case 4:
+                deleteFront();
+                break;
+            case 5:
+                printf("Enter value to delete: ");
+                scanf("%d", &value);
+                deleteMiddle(value);
+                break;
+            case 6:
+                deleteEnd();
+                break;
+            case 7:
+                displayList();
+                break;
+            case 8:
+                if (head == NULL) {
+                    printf("List is empty.\n");
+                } else {
+                    printf("List in reverse: ");
+                    displayReverse(head);
+                    printf("\n");
+                }
+                break;
+            case 9:
+                reverseList();
+                printf("List reversed.\n");
+                break;
+            case 10:
+                freeList();
+                printf("Exiting...\n");
+                return 0;
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+    return 0;
+}
